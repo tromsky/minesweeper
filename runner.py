@@ -1,6 +1,7 @@
-import pygame
 import sys
 import time
+
+import pygame
 
 from minesweeper import Minesweeper, MinesweeperAI
 
@@ -71,7 +72,7 @@ while True:
         rules = [
             "Click a cell to reveal it.",
             "Right-click a cell to mark it as a mine.",
-            "Mark all mines successfully to win!"
+            "Mark all mines successfully to win!",
         ]
         for i, rule in enumerate(rules):
             line = smallFont.render(rule, True, WHITE)
@@ -93,7 +94,7 @@ while True:
             mouse = pygame.mouse.get_pos()
             if buttonRect.collidepoint(mouse):
                 instructions = False
-                time.sleep(0.3)
+                time.sleep(0.4)
 
         pygame.display.flip()
         continue
@@ -108,7 +109,8 @@ while True:
             rect = pygame.Rect(
                 board_origin[0] + j * cell_size,
                 board_origin[1] + i * cell_size,
-                cell_size, cell_size
+                cell_size,
+                cell_size,
             )
             pygame.draw.rect(screen, GRAY, rect)
             pygame.draw.rect(screen, WHITE, rect, 3)
@@ -120,8 +122,7 @@ while True:
                 screen.blit(flag, rect)
             elif (i, j) in revealed:
                 neighbors = smallFont.render(
-                    str(game.nearby_mines((i, j))),
-                    True, BLACK
+                    str(game.nearby_mines((i, j))), True, BLACK
                 )
                 neighborsTextRect = neighbors.get_rect()
                 neighborsTextRect.center = rect.center
@@ -132,8 +133,10 @@ while True:
 
     # AI Move button
     aiButton = pygame.Rect(
-        (2 / 3) * width + BOARD_PADDING, (1 / 3) * height - 50,
-        (width / 3) - BOARD_PADDING * 2, 50
+        (2 / 3) * width + BOARD_PADDING,
+        (1 / 3) * height - 50,
+        (width / 3) - BOARD_PADDING * 2,
+        50,
     )
     buttonText = mediumFont.render("AI Move", True, BLACK)
     buttonRect = buttonText.get_rect()
@@ -143,8 +146,10 @@ while True:
 
     # Reset button
     resetButton = pygame.Rect(
-        (2 / 3) * width + BOARD_PADDING, (1 / 3) * height + 20,
-        (width / 3) - BOARD_PADDING * 2, 50
+        (2 / 3) * width + BOARD_PADDING,
+        (1 / 3) * height + 20,
+        (width / 3) - BOARD_PADDING * 2,
+        50,
     )
     buttonText = mediumFont.render("Reset", True, BLACK)
     buttonRect = buttonText.get_rect()
@@ -180,6 +185,12 @@ while True:
 
         # If AI button clicked, make an AI move
         if aiButton.collidepoint(mouse) and not lost:
+
+            # AI flag-toggling
+            for mine in ai.mines:
+                if (mine[0], mine[1]) not in revealed:
+                    flags.add(((mine[0], mine[1])))
+
             move = ai.make_safe_move()
             if move is None:
                 move = ai.make_random_move()
@@ -205,9 +216,11 @@ while True:
         elif not lost:
             for i in range(HEIGHT):
                 for j in range(WIDTH):
-                    if (cells[i][j].collidepoint(mouse)
-                            and (i, j) not in flags
-                            and (i, j) not in revealed):
+                    if (
+                        cells[i][j].collidepoint(mouse)
+                        and (i, j) not in flags
+                        and (i, j) not in revealed
+                    ):
                         move = (i, j)
 
     # Make move and update AI knowledge
