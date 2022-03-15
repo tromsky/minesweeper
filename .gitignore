@@ -1,3 +1,11 @@
+# misc python & ide stuff
+bin/
+pyvenv.cfg
+.vscode/
+include/
+.DS_Store
+share/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
